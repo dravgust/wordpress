@@ -12,24 +12,24 @@ services:
       MYSQL_DATABASE: wordpress-db
       MYSQL_USER: root
       MYSQL_PASSWORD: wordpressAa123456!
-wordpress:
-    depends_on:
-      - db
-    container_name: wordpress-container
-    image: wordpress:latest
-    restart: unless-stopped
-    volumes:
-      - ${WP_CORE}:/var/www/html
-      - ${WP_CONTENT}:/var/www/html/wp-content
-    environment:
-      WORDPRESS_DB_HOST: wordpress-db-container:3306
-      WORDPRESS_DB_NAME: wordpress-db
-      WORDPRESS_DB_USER: root
-      WORDPRESS_DB_PASSWORD: wordpressAa123456!
-      WORDPRESS_TABLE_PREFIX: wp_
-      VIRTUAL_HOST: lightning4you.com, www.lightning4you.com
-      LETSENCRYPT_HOST: lightning4you.com, www.lightning4you.com
-      LETSENCRYPT_EMAIL: dravgust@hotmail.com
+  wordpress:
+      depends_on:
+        - db
+      container_name: wordpress-container
+      image: wordpress:latest
+      restart: unless-stopped
+      volumes:
+        - ${WP_CORE}:/var/www/html
+        - ${WP_CONTENT}:/var/www/html/wp-content
+      environment:
+        WORDPRESS_DB_HOST: wordpress-db-container:3306
+        WORDPRESS_DB_NAME: wordpress-db
+        WORDPRESS_DB_USER: root
+        WORDPRESS_DB_PASSWORD: wordpressAa123456!
+        WORDPRESS_TABLE_PREFIX: wp_
+        VIRTUAL_HOST: lightning4you.com, www.lightning4you.com
+        LETSENCRYPT_HOST: lightning4you.com, www.lightning4you.com
+        LETSENCRYPT_EMAIL: dravgust@hotmail.com
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
