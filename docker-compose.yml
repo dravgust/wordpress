@@ -1,28 +1,54 @@
-version: '3.3'
+version: '3'
 
 services:
-   db:
-     image: mysql:5.7
-     volumes:
-       - db_data:/var/lib/mysql
-     restart: always
-     environment:
-       MYSQL_ROOT_PASSWORD: rootAa123456!
-       MYSQL_DATABASE: wordpress
-       MYSQL_USER: wordpress
-       MYSQL_PASSWORD: wordpressAa123456!
-
-   wordpress:
-     depends_on:
-       - db
-     image: wordpress:latest
-     ports:
-       - "8000:80"
-     restart: always
-     environment:
-       WORDPRESS_DB_HOST: db:3306
-       WORDPRESS_DB_USER: wordpress
-       WORDPRESS_DB_PASSWORD: wordpressAa123456!
-       WORDPRESS_DB_NAME: wordpress
-volumes:
-    db_data: {}
+  db:
+    container_name: wordpress-db-container
+    image: mariadb:latest
+    restart: unless-stopped
+    volumes:
+      - ${DB_PATH}:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootAa123456!
+      MYSQL_DATABASE: wordpress-db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: wordpressAa123456!
+wordpress:
+    depends_on:
+      - db
+    container_name: wordpress-container
+    image: wordpress:latest
+    restart: unless-stopped
+    volumes:
+      - ${WP_CORE}:/var/www/html
+      - ${WP_CONTENT}:/var/www/html/wp-content
+    environment:
+      WORDPRESS_DB_HOST: wordpress-db-container:3306
+      WORDPRESS_DB_NAME: wordpress-db
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: wordpressAa123456!
+      WORDPRESS_TABLE_PREFIX: wp_
+      VIRTUAL_HOST: lightning4you.com, www.lightning4you.com
+      LETSENCRYPT_HOST: lightning4you.com, www.lightning4you.com
+      LETSENCRYPT_EMAIL: dravgust@hotmail.com
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    external_links:
+      - db
+    ports:
+      - 8181:80
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: rootAa123456!
+#   wpcli:
+#     image: tatemz/wp-cli
+#     volumes:
+#       - ${WP_CORE}:/var/www/html
+#       - ${WP_CONTENT}:/var/www/html/wp-content
+#     depends_on:
+#       - db
+#     entrypoint: wp
+networks:
+  default:
+    external:
+      name: webproxy
